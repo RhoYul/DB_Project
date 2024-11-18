@@ -1,3 +1,5 @@
+// Database로부터 데이터를 받아오는 그릇
+
 package User;
 
 public class UserDTO {

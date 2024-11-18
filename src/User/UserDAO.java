@@ -9,9 +9,9 @@ import java.sql.SQLException;
 
 public class UserDAO {
 
-    // 예제: 사용자 정보 조회 메서드
+    // 회원가입 시 입력받은 데이터 데이터베이스에 insert하는 query문
 	public void insertUser(String userId, String passwd, String userName, String email) {
-	    String query = "INSERT INTO Users (USER_ID, PASSWD, USER_NAME, EMAIL) VALUES (?, ?, ?, ?)";
+	    String query = "INSERT INTO Users (USER_ID, PASSWD, USER_NAME, EMAIL) VALUES (?, ?, ?, ?)"; // query
 
 	    try (Connection conn = DBUtil.getConnection(); // DB 연결
 	         PreparedStatement pstmt = conn.prepareStatement(query)) { // 값을 받아와서 query문을 실행
@@ -31,9 +31,9 @@ public class UserDAO {
 	        ex.printStackTrace();
 	    }
 	}
-	  // 사용자 인증
+	  // 데이터베이스에 존재하는 user 인증하는 query문
     public boolean authenticateUser(String userId, String passwd) {
-        String query = "SELECT * FROM Users WHERE USER_ID = ? AND PASSWD = ?";
+        String query = "SELECT * FROM Users WHERE USER_ID = ? AND PASSWD = ?"; // query
 
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
