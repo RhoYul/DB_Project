@@ -4,6 +4,7 @@ import Database.DBUtil;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class UserDAO {
@@ -30,5 +31,25 @@ public class UserDAO {
 	        ex.printStackTrace();
 	    }
 	}
-	
+	  // 사용자 인증
+    public boolean authenticateUser(String userId, String passwd) {
+        String query = "SELECT * FROM Users WHERE USER_ID = ? AND PASSWD = ?";
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setString(1, userId);
+            pstmt.setString(2, passwd);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                return rs.next(); // 결과가 있으면 true
+            }
+
+        } catch (SQLException ex) {
+            System.out.println("Wrong ID/PASS : " + ex.getMessage());
+            ex.printStackTrace();
+        }
+
+        return false;
+    }
 }

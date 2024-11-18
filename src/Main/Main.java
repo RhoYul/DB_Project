@@ -1,6 +1,7 @@
 package Main;
 
 import User.UserDAO;
+import javax.swing.SwingUtilities;
 
 public class Main {
     public static void main(String[] args) {
@@ -13,7 +14,9 @@ public class Main {
         String userName = "노율";
         String email = "shdbf0813@gmail.com";
 
-        // insertUser 메서드 호출
-        userDAO.insertUser(userId, passwd, userName, email);
+        SwingUtilities.invokeLater(() -> {
+            LoginFrame loginFrame = new LoginFrame(userDAO);
+            loginFrame.setVisible(true);
+        });
     }
 }
