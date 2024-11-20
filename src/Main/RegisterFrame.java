@@ -1,69 +1,125 @@
-// 회원가입 화면 구현
-
 package Main;
 
 import User.UserDAO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class RegisterFrame extends JFrame {
-
-    private UserDAO userDAO; // UserDAO 쿼리문 선언 (쿼리문 작성은 UserDAO에서)
+    private UserDAO userDAO;
 
     public RegisterFrame(UserDAO userDAO) {
         this.userDAO = userDAO;
-        setTitle("회원가입");
-        setSize(350, 300);
+
+        // JFrame 설정
+        setTitle("Twitter Sign Up");
+        setSize(400, 500);
         setLocationRelativeTo(null);
+        getContentPane().setBackground(Color.BLACK);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLayout(null);
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(5, 2, 5, 5));
+        Font boldFont = new Font("Arial", Font.BOLD, 14);
+        Color twitterBlue = new Color(29, 161, 242);
 
-        JLabel userIdLabel = new JLabel("아이디:");
-        JTextField userIdField = new JTextField();
-        JLabel passwdLabel = new JLabel("비밀번호:");
-        JPasswordField passwdField = new JPasswordField();
-        JLabel userNameLabel = new JLabel("이름:");
-        JTextField userNameField = new JTextField();
-        JLabel emailLabel = new JLabel("이메일:");
+        // 로고 패널
+        JPanel logoPanel = new JPanel();
+        logoPanel.setBounds(0, 0, 400, 60);
+        logoPanel.setBackground(Color.BLACK);
+        JLabel logoLabel = new JLabel("X");
+        logoLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        logoLabel.setForeground(Color.WHITE);
+        logoPanel.add(logoLabel);
+        add(logoPanel);
+
+        // 이름 입력
+        JLabel nameLabel = new JLabel("Name:");
+        nameLabel.setBounds(50, 70, 100, 30);
+        nameLabel.setForeground(Color.WHITE);
+        nameLabel.setFont(boldFont);
+        add(nameLabel);
+
+        JTextField nameField = new JTextField();
+        nameField.setBounds(130, 70, 150, 30);
+        add(nameField);
+
+        // 이메일 입력
+        JLabel emailLabel = new JLabel("Email:");
+        emailLabel.setBounds(50, 120, 100, 30);
+        emailLabel.setForeground(Color.WHITE);
+        emailLabel.setFont(boldFont);
+        add(emailLabel);
+
         JTextField emailField = new JTextField();
-        JButton registerButton = new JButton("회원가입");
+        emailField.setBounds(130, 120, 150, 30);
+        add(emailField);
 
-        panel.add(userIdLabel);
-        panel.add(userIdField);
-        panel.add(passwdLabel);
-        panel.add(passwdField);
-        panel.add(userNameLabel);
-        panel.add(userNameField);
-        panel.add(emailLabel);
-        panel.add(emailField);
-        panel.add(new JLabel()); // 빈 공간
-        panel.add(registerButton);
+        // 사용자 아이디 입력
+        JLabel idLabel = new JLabel("ID:");
+        idLabel.setBounds(50, 190, 100, 30);
+        idLabel.setForeground(Color.WHITE);
+        idLabel.setFont(boldFont);
+        add(idLabel);
 
-        add(panel);
-        // 회원가입 화면 구현
+        JTextField idField = new JTextField();
+        idField.setBounds(130, 190, 150, 30);
+        add(idField);
 
-        registerButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String userId = userIdField.getText();
-                String passwd = new String(passwdField.getPassword());
-                String userName = userNameField.getText();
-                String email = emailField.getText();
-                // 회원가입 정보 입력받는 부분
+        // 비밀번호 입력
+        JLabel passwordLabel = new JLabel("Password:");
+        passwordLabel.setBounds(50, 260, 100, 30);
+        passwordLabel.setForeground(Color.WHITE);
+        passwordLabel.setFont(boldFont);
+        add(passwordLabel);
 
-                if (userId.isEmpty() || passwd.isEmpty() || userName.isEmpty() || email.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "모든 필드를 입력하세요.");
-                    return;
-                }
-                // 빈 칸이 있을 시
+        JPasswordField passwordField = new JPasswordField();
+        passwordField.setBounds(130, 260, 150, 30);
+        add(passwordField);
 
-                userDAO.insertUser(userId, passwd, userName, email); // 입력받은 데이터 query문을 통해 데이터베이스에 insert
-                JOptionPane.showMessageDialog(null, "회원가입 완료!");
-                dispose(); // 창 닫기
+        // 가입하기 버튼
+        JButton signupButton = new JButton("Sign Up");
+        styleButton(signupButton, Color.BLACK, Color.WHITE, twitterBlue, boldFont);
+        signupButton.setBounds(100, 330, 200, 50);
+        add(signupButton);
+
+        // Sign Up 버튼 동작
+        signupButton.addActionListener(e -> {
+            String name = nameField.getText();
+            String email = emailField.getText();
+            String userId = idField.getText();
+            String password = new String(passwordField.getPassword());
+
+            if (name.isEmpty() || email.isEmpty() || userId.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "All fields must be filled!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
             }
+
+            // 중복 체크
+            if (isDuplicate(userId, email)) {
+                return; // 중복이면 종료
+            }
+
+            // 데이터베이스에 사용자 정보 저장
+            userDAO.insertUser(userId, password, name, email);
+            JOptionPane.showMessageDialog(this, "Sign Up Successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            dispose(); // 창 닫기
         });
+    }
+
+    // 아이디 및 이메일 중복 체크
+    private boolean isDuplicate(String userId, String email) {
+        if (userDAO.authenticateUser(userId, email)) { // 이메일 중복 체크
+            JOptionPane.showMessageDialog(this, "This email or ID is already in use.", "Error", JOptionPane.ERROR_MESSAGE);
+            return true;
+        }
+        return false;
+    }
+
+    // 버튼 스타일 설정 메서드
+    private static void styleButton(JButton button, Color bgColor, Color borderColor, Color textColor, Font font) {
+        button.setBackground(bgColor);
+        button.setForeground(textColor);
+        button.setFocusPainted(false);
+        button.setFont(font);
+        button.setBorder(BorderFactory.createLineBorder(borderColor, 1));
     }
 }
