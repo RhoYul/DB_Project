@@ -1,3 +1,5 @@
+// 데이터베이스 (mysql)과 java 연결하는 부분 (jdbc 사용)
+
 package Database;
 
 import java.sql.Connection;
