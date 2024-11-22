@@ -34,8 +34,8 @@ public class PostDAO {
         			u.USER_ID AS LOGIN_ID, 
         			u.USER_NAME, 
         			p.CONTENT, 
-        			(SELECT COUNT(*) FROM `like` WHERE POST_ID = p.ID) AS LIKES, 
-        			(SELECT COUNT(*) FROM `hate` WHERE POST_ID = p.ID) AS HATES, 
+        			(SELECT COUNT(*) FROM `likes` WHERE POST_ID = p.ID) AS LIKES, 
+        			(SELECT COUNT(*) FROM `hates` WHERE POST_ID = p.ID) AS HATES, 
         			p.REGDATE, 
         			p.UPDATED_AT
         		FROM 
@@ -76,10 +76,10 @@ public class PostDAO {
         try (Connection conn = DBUtil.getConnection()) {
             conn.setAutoCommit(false);
 
-            String checkQuery = "SELECT * FROM `like` WHERE POST_ID = ? AND USER_ID = ?";
-            String insertQuery = "INSERT INTO `like` (POST_ID, USER_ID, REGDATE) VALUES (?, ?, NOW())";
-            String deleteQuery = "DELETE FROM `like` WHERE POST_ID = ? AND USER_ID = ?";
-            String deleteHateQuery = "DELETE FROM `hate` WHERE POST_ID = ? AND USER_ID = ?";
+            String checkQuery = "SELECT * FROM `likes` WHERE POST_ID = ? AND USER_ID = ?";
+            String insertQuery = "INSERT INTO `likes` (POST_ID, USER_ID, REGDATE) VALUES (?, ?, NOW())";
+            String deleteQuery = "DELETE FROM `likes` WHERE POST_ID = ? AND USER_ID = ?";
+            String deleteHateQuery = "DELETE FROM `hates` WHERE POST_ID = ? AND USER_ID = ?";
 
             try (PreparedStatement checkStmt = conn.prepareStatement(checkQuery)) {
                 checkStmt.setInt(1, postId);
@@ -114,10 +114,10 @@ public class PostDAO {
         try (Connection conn = DBUtil.getConnection()) {
             conn.setAutoCommit(false);
 
-            String checkQuery = "SELECT * FROM `hate` WHERE POST_ID = ? AND USER_ID = ?";
-            String insertQuery = "INSERT INTO `hate` (POST_ID, USER_ID, REGDATE) VALUES (?, ?, NOW())";
-            String deleteQuery = "DELETE FROM `hate` WHERE POST_ID = ? AND USER_ID = ?";
-            String deleteLikeQuery = "DELETE FROM `like` WHERE POST_ID = ? AND USER_ID = ?";
+            String checkQuery = "SELECT * FROM `hates` WHERE POST_ID = ? AND USER_ID = ?";
+            String insertQuery = "INSERT INTO `hates` (POST_ID, USER_ID, REGDATE) VALUES (?, ?, NOW())";
+            String deleteQuery = "DELETE FROM `hates` WHERE POST_ID = ? AND USER_ID = ?";
+            String deleteLikeQuery = "DELETE FROM `likes` WHERE POST_ID = ? AND USER_ID = ?";
 
             try (PreparedStatement checkStmt = conn.prepareStatement(checkQuery)) {
                 checkStmt.setInt(1, postId);
