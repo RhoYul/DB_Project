@@ -87,7 +87,10 @@ public class HomeFrame extends JFrame {
         add(scrollPane, BorderLayout.CENTER);
 
         // 버튼 동작 정의
-        userButton.addActionListener(e -> JOptionPane.showMessageDialog(this, "User button clicked!"));
+        userButton.addActionListener(e -> {
+            UserProfileUI UserProfileUI = new UserProfileUI(userId, this); // 현재 사용자의 userId 전달
+            UserProfileUI.setVisible(true);
+        });
 
         uploadButton.addActionListener(e -> {
             UploadFrame uploadFrame = new UploadFrame(userId, this); // 현재 사용자의 userId 전달

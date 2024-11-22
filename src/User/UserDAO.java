@@ -48,6 +48,26 @@ public class UserDAO {
 	    }
 	    return -1; // ID가 없을 경우 -1 반환
 	}
+	
+	public String getUserLogId(int ID) {
+        String query = "SELECT USER_ID FROM Users WHERE ID = ?";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+             
+            pstmt.setInt(1, ID); // 검색할 ID 설정
+            ResultSet rs = pstmt.executeQuery();
+            
+            if (rs.next()) {
+                String userLogId = rs.getString("USER_ID");
+                return userLogId;
+            } else {
+                return null; // 사용자 없음
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
 	  // 데이터베이스에 존재하는 user 인증하는 query문
     public boolean authenticateUser(String userId, String passwd) {

@@ -79,7 +79,7 @@ public class SearchFrame extends JFrame {
                 }
 
                 // 팔로우 동작 수행
-                boolean success = followDAO.followUser(currentUserId, targetUserId);
+                boolean success = followDAO.toggleFollow(currentUserId, targetUserId);
                 if (success) {
                     JOptionPane.showMessageDialog(this, "You are now following this user!");
                 } else {

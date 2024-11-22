@@ -26,27 +26,27 @@ public class PostDAO {
         return -1; // Return -1 if post creation fails
     }
 
- // Get all posts for a user (only posts from followed users)
+    // Get all posts for a user (only posts from followed users)
     public List<PostDTO> getPostsForUser(int userId) throws SQLException {
         String query = """
-                SELECT DISTINCT 
-        			p.ID, 
-        			u.USER_ID AS LOGIN_ID, 
-        			u.USER_NAME, 
-        			p.CONTENT, 
-        			(SELECT COUNT(*) FROM `likes` WHERE POST_ID = p.ID) AS LIKES, 
-        			(SELECT COUNT(*) FROM `hates` WHERE POST_ID = p.ID) AS HATES, 
-        			p.REGDATE, 
+                SELECT DISTINCT
+        			p.ID,
+        			u.USER_ID AS LOGIN_ID,
+        			u.USER_NAME,
+        			p.CONTENT,
+        			(SELECT COUNT(*) FROM `likes` WHERE POST_ID = p.ID) AS LIKES,
+        			(SELECT COUNT(*) FROM `hates` WHERE POST_ID = p.ID) AS HATES,
+        			p.REGDATE,
         			p.UPDATED_AT
-        		FROM 
+        		FROM
         			post p
-        		JOIN 
+        		JOIN
         			follow f ON f.FOLLOWING_ID = p.USER_ID
-        		JOIN 
+        		JOIN
         			USERS u ON u.ID = p.USER_ID
-        		WHERE 
+        		WHERE
         			f.FOLLOW_ID = ?
-        		ORDER BY 
+        		ORDER BY
         			p.REGDATE DESC;
                 """;
 
