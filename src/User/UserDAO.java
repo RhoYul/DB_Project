@@ -70,4 +70,24 @@ public class UserDAO {
 
         return false;
     }
+    
+    public String searchUserById(String userId) {
+        String query = "SELECT USER_NAME FROM Users WHERE USER_ID = ?";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+             
+            pstmt.setString(1, userId); // 검색할 ID 설정
+            ResultSet rs = pstmt.executeQuery();
+            
+            if (rs.next()) {
+                String userName = rs.getString("USER_NAME");
+                return userId + " " + userName;
+            } else {
+                return null; // 사용자 없음
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

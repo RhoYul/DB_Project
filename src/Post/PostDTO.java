@@ -1,67 +1,90 @@
 package Post;
 
 public class PostDTO {
-	
-	private int ID;
-	private int USER_ID;
-	private String CONTENT;
-	private int LIKES;
-	
-	private int HATES;
-	private String REGDATE;
-	private String UPDATED_AT;
-	
-	public PostDTO(int ID, int USER_ID, String CONTENT, int LIKES,int HATES, String REGDATE, String UPDATED_AT) {
-		this.ID = ID;
-		this.USER_ID = USER_ID;
-		this.CONTENT = CONTENT;
-		this.LIKES = LIKES;
-		this.HATES = HATES;
-		this.REGDATE = REGDATE;
-		this.UPDATED_AT = UPDATED_AT;
-	}
-	
-	public int getID() {
-		return ID;
-	}
-	public void setID(int iD) {
-		ID = iD;
-	}
-	public int getUSER_ID() {
-		return USER_ID;
-	}
-	public void setUSER_ID(int uSER_ID) {
-		USER_ID = uSER_ID;
-	}
-	public String getCONTENT() {
-		return CONTENT;
-	}
-	public void setCONTENT(String cONTENT) {
-		CONTENT = cONTENT;
-	}
-	public String getREGDATE() {
-		return REGDATE;
-	}
-	public void setREGDATE(String rEGDATE) {
-		REGDATE = rEGDATE;
-	}
-	public String getUPDATED_AT() {
-		return UPDATED_AT;
-	}
-	public void setUPDATED_AT(String uPDATED_AT) {
-		UPDATED_AT = uPDATED_AT;
-	}
-	public int getLIKES() {
-		return LIKES;
-	}
-	public void setLIKES(int lIKES) {
-		LIKES = lIKES;
-	}
-	public int getHATES() {
-		return HATES;
+    private int id;
+    private String loginId; // 로그인 ID (user.USER_ID)
+    private String name;    // 게시글 작성자의 이름 (user.NAME)
+    private String content;
+    private int likes;
+	private int hates;
+    private String regDate;
+    private String updatedAt;
+
+    // Constructor
+    public PostDTO(int id, String loginId, String name, String content, int likes, int hates, String regDate, String updatedAt) {
+        this.id = id;
+        this.loginId = loginId;
+        this.name = name;
+        this.content = content;
+        this.likes = likes;
+        this.hates = hates;
+        this.regDate = regDate;
+        this.updatedAt = updatedAt;
+    }
+
+    // Getters and Setters
+    public String getLoginId() {
+        return loginId;
+    }
+
+    public void setLoginId(String loginId) {
+        this.loginId = loginId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+    public int getId() {
+		return id;
 	}
 
-	public void setHATES(int hATES) {
-		HATES = hATES;
+	public void setId(int id) {
+		this.id = id;
 	}
+
+	public int getLikes() {
+		return likes;
+	}
+
+	public void setLikes(int likes) {
+		this.likes = likes;
+	}
+
+	public int getHates() {
+		return hates;
+	}
+
+	public void setHates(int hates) {
+		this.hates = hates;
+	}
+
+	public String getRegDate() {
+		return regDate;
+	}
+
+	public void setRegDate(String regDate) {
+		this.regDate = regDate;
+	}
+
+	public String getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(String updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+    // Other getters and setters...
 }
