@@ -116,7 +116,7 @@ public class LoginFrame extends JFrame {
 
     // HomeFrame 열기
     private void openHomeFrame(String username) {
-        HomeFrame homeFrame = new HomeFrame(authorId, username);
+        HomeFrame homeFrame = new HomeFrame(authorId);
         homeFrame.setVisible(true);
         dispose(); // LoginFrame 닫기
     }

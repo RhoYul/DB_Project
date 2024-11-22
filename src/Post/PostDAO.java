@@ -147,32 +147,38 @@ public class PostDAO {
             conn.commit();
         }
     }
-
-    // Add a comment to a post
-    public boolean addComment(int postId, int userId, String comment) throws SQLException {
-        String query = "INSERT INTO Comment (POST_ID, USER_ID, COMMENT) VALUES (?, ?, ?)";
+    
+    // 좋아요 수 가져오기
+    public int getLikesCount(int postId) {
+        String query = "SELECT COUNT(*) FROM likes WHERE POST_ID = ?";
         try (Connection conn = DBUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setInt(1, postId);
-            pstmt.setInt(2, userId);
-            pstmt.setString(3, comment);
-            return pstmt.executeUpdate() > 0;
-        }
-    }
-
-    // Get all comments for a post
-    public List<String> getCommentsForPost(int postId) throws SQLException {
-        String query = "SELECT COMMENT FROM Comment WHERE POST_ID = ? ORDER BY REGDATE ASC";
-        List<String> comments = new ArrayList<>();
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setInt(1, postId);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    comments.add(rs.getString("COMMENT"));
+                PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setInt(1, postId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("COUNT(*)");
                 }
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return comments;
+        return 0; // 기본값: 좋아요가 없으면 0 반환
+    }
+    
+    // 싫어요 수 가져오기
+    public int getHatesCount(int postId) {
+        String query = "SELECT COUNT(*) FROM hates WHERE POST_ID = ?";
+        try (Connection conn = DBUtil.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setInt(1, postId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("COUNT(*)");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0; // 기본값: 좋아요가 없으면 0 반환
     }
 }

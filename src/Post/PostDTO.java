@@ -1,7 +1,5 @@
 package Post;
 
-import java.util.List;
-
 public class PostDTO {
     private int id;
     private String loginId; // 로그인 ID (user.USER_ID)
@@ -11,7 +9,6 @@ public class PostDTO {
     private int hates;      // 싫어요 수
     private String regDate; // 게시글 등록일
     private String updatedAt; // 게시글 수정일
-    private List<String> comments; // 댓글 리스트
 
     // Constructor
     public PostDTO(int id, String loginId, String name, String content, int likes, int hates, String regDate, String updatedAt) {
@@ -88,32 +85,5 @@ public class PostDTO {
 
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public List<String> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<String> comments) {
-        this.comments = comments;
-    }
-
-    // Method to add a comment to the post
-    public void addComment(String comment) {
-        if (this.comments != null) {
-            this.comments.add(comment);
-        }
-    }
-
-    // Method to remove a comment from the post
-    public void removeComment(String comment) {
-        if (this.comments != null) {
-            this.comments.remove(comment);
-        }
-    }
-
-    // Method to get the number of comments on the post
-    public int getCommentCount() {
-        return this.comments != null ? this.comments.size() : 0;
     }
 }

@@ -10,13 +10,12 @@ import Post.PostDTO;
 public class HomeFrame extends JFrame {
     private JPanel postPanel; // 게시글 표시 패널
     private JLabel noPostLabel; // 게시물이 없을 때 표시할 라벨
-    private String username; // 사용자 이름
     private int userId; // 로그인한 사용자의 ID
     private PostDAO postDAO; // PostDAO 인스턴스
-
-    public HomeFrame(int userId, String username) {
+    private String currentSortBy = "date"; // 초기값 설정
+    
+    public HomeFrame(int userId) {
         this.userId = userId;
-        this.username = username;
         this.postDAO = new PostDAO();
 
         setTitle("Home");
@@ -32,7 +31,7 @@ public class HomeFrame extends JFrame {
         add(searchButton); // 프레임에 버튼 추가
 
         searchButton.addActionListener(e -> {
-            new SearchFrame(userId); // SearchFrame 창 열기
+            new SearchFrame(userId).setVisible(true); // SearchFrame 창 열기
         });
 
         // 사용자 버튼, 게시글 작성 버튼 패널 (하단)
@@ -96,12 +95,18 @@ public class HomeFrame extends JFrame {
             UploadFrame uploadFrame = new UploadFrame(userId, this); // 현재 사용자의 userId 전달
             uploadFrame.setVisible(true);
         });
-
-        sortByPopularityButton.addActionListener(e -> updatePostList("popularity"));
-        sortByDateButton.addActionListener(e -> updatePostList("date"));
+        
+        sortByPopularityButton.addActionListener(e -> {
+            currentSortBy = "popularity";
+            updatePostList(currentSortBy);
+        });
+        sortByDateButton.addActionListener(e -> {
+            currentSortBy = "date";
+            updatePostList(currentSortBy);
+        });
 
         // 초기 게시글 로드
-        updatePostList("popularity");
+        updatePostList("date");
     }
 
     // 게시글 목록 업데이트
@@ -201,7 +206,7 @@ public class HomeFrame extends JFrame {
     	actionsPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0)); // 하단 간격 추가
 
     	// 좋아요 버튼
-    	JButton likeButton = new JButton("Like [" + post.getLikes() + "]");
+    	JButton likeButton = new JButton("Like [" + postDAO.getLikesCount(post.getId()) + "]");
     	likeButton.setFont(new Font("Arial", Font.PLAIN, 12));
     	likeButton.setBackground(new Color(29, 161, 242)); // 트위터 블루
     	likeButton.setForeground(Color.WHITE);
@@ -209,14 +214,14 @@ public class HomeFrame extends JFrame {
     	likeButton.addActionListener(e -> {
     	    try {
     	        postDAO.toggleLike(post.getId(), userId); // 좋아요 토글
-    	        updatePostList("popularity"); // UI 업데이트
+    	        updatePostList("date"); // UI 업데이트
     	    } catch (SQLException ex) {
     	        ex.printStackTrace();
     	    }
     	});
 
     	// 싫어요 버튼
-    	JButton dislikeButton = new JButton("Hate [" + post.getHates() + "]");
+    	JButton dislikeButton = new JButton("Hate [" + postDAO.getHatesCount(post.getId()) + "]");
     	dislikeButton.setFont(new Font("Arial", Font.PLAIN, 12));
     	dislikeButton.setBackground(new Color(242, 29, 29)); // 빨간색
     	dislikeButton.setForeground(Color.WHITE);
@@ -224,7 +229,7 @@ public class HomeFrame extends JFrame {
     	dislikeButton.addActionListener(e -> {
     	    try {
     	        postDAO.toggleHate(post.getId(), userId); // 싫어요 토글
-    	        updatePostList("popularity"); // UI 업데이트
+    	        updatePostList("date"); // UI 업데이트
     	    } catch (SQLException ex) {
     	        ex.printStackTrace();
     	    }
@@ -235,10 +240,19 @@ public class HomeFrame extends JFrame {
     	actionsPanel.add(dislikeButton);
 
     	// 게시글 레이아웃 구성
+    	postContainer.add(userInfoLabel);
     	postContainer.add(headerPanel); // 작성자 정보와 시간
     	postContainer.add(contentPanel); // 게시글 내용
     	postContainer.add(actionsPanel); // 좋아요/싫어요 버튼
 
+    	postContainer.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                // PostFrame을 열고 게시글 정보를 전달
+                new PostFrame(userId, post.getId(), post.getName(), post.getContent()).setVisible(true);
+            }
+        });
+    	
     	return postContainer;
     }
 
@@ -248,6 +262,7 @@ public class HomeFrame extends JFrame {
         postPanel.setBackground(new Color(245, 245, 245)); // 트위터 스타일 배경색
 
         JScrollPane scrollPane = new JScrollPane(postPanel);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16); // 스크롤 속도 설정
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); // 가로 스크롤 비활성화
 

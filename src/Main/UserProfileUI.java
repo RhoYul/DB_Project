@@ -18,7 +18,7 @@ public class UserProfileUI extends JFrame {
 
     public UserProfileUI(int userId, HomeFrame homeFrame) {
         setTitle("User");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(400, 600);
         setLayout(new BorderLayout());
 
@@ -88,7 +88,7 @@ public class UserProfileUI extends JFrame {
 
         // 사용자 이름 레이블
         JLabel userLabel = new JLabel(userName != null ? userName : "Unknown User", SwingConstants.LEFT);
-        userLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        userLabel.setFont(new Font("맑은 고딕", Font.BOLD, 20));
 
         profilePanel.add(profileLabel);
         profilePanel.add(userLabel);
