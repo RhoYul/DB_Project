@@ -7,18 +7,18 @@ import Follow.FollowDAO;
 
 public class SearchFrame extends JFrame {
 
-    private JPanel resultPanel; // 검색 결과를 표시할 패널
-    private int userId; // 로그인한 사용자 ID
+    private JPanel resultPanel; // Panel to display search results
+    private int userId; // Logged-in user's ID
 
     public SearchFrame(int userId) {
-        this.userId = userId; // 로그인된 사용자 ID 전달
+        this.userId = userId; // Pass the logged-in user's ID
         setTitle("Search User");
         setSize(400, 300);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // 현재 창만 닫기
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Only close the current frame
         setLayout(new BorderLayout());
 
-        // 검색 입력 필드와 버튼
+        // Search input field and button
         JPanel searchPanel = new JPanel(new FlowLayout());
         JLabel label = new JLabel("Enter User ID:");
         JTextField textField = new JTextField(15);
@@ -29,12 +29,12 @@ public class SearchFrame extends JFrame {
         searchPanel.add(searchButton);
         add(searchPanel, BorderLayout.NORTH);
 
-        // 검색 결과를 표시할 패널 초기화
+        // Initialize the result panel for displaying search results
         resultPanel = new JPanel();
         resultPanel.setLayout(new BoxLayout(resultPanel, BoxLayout.Y_AXIS));
         add(resultPanel, BorderLayout.CENTER);
 
-        // 검색 버튼 클릭 이벤트
+        // Action for the search button
         searchButton.addActionListener(e -> {
             String searchQuery = textField.getText().trim();
             if (!searchQuery.isEmpty()) {
@@ -47,38 +47,38 @@ public class SearchFrame extends JFrame {
         setVisible(true);
     }
 
-    // 검색 결과를 화면에 표시
+    // Display user information based on search query
     private void displayUserInfo(String searchedUserId) {
         UserDAO userDAO = new UserDAO();
         FollowDAO followDAO = new FollowDAO();
 
-        // 검색된 사용자 정보 가져오기
+        // Fetch the searched user's information
         String userInfo = userDAO.searchUserById(searchedUserId);
 
-        // 결과 패널 초기화
+        // Clear the result panel
         resultPanel.removeAll();
 
         if (userInfo != null) {
-            // 유저 정보 표시
+            // Display user information
             JLabel userInfoLabel = new JLabel(userInfo);
             userInfoLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 13));
             resultPanel.add(userInfoLabel);
 
-            // 팔로우 버튼 추가
+            // Add Follow button
             JButton followButton = new JButton("Follow");
             followButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             followButton.addActionListener(e -> {
-                int currentUserId = userId; // 현재 로그인한 사용자 ID
-                int targetUserId = userDAO.getUserId(searchedUserId); // 검색된 사용자 ID
+                int currentUserId = userId; // Current logged-in user's ID
+                int targetUserId = userDAO.getUserId(searchedUserId); // ID of the searched user
 
-                // 유효성 체크
+                // Validate IDs
                 if (currentUserId == -1 || targetUserId == -1) {
                     JOptionPane.showMessageDialog(this, "Invalid user IDs. Cannot follow.");
                     return;
                 }
 
-                // 팔로우 동작 수행
+                // Perform follow action
                 boolean success = followDAO.toggleFollow(currentUserId, targetUserId);
                 if (success) {
                     JOptionPane.showMessageDialog(this, "You are now following this user!");
@@ -87,17 +87,36 @@ public class SearchFrame extends JFrame {
                 }
             });
 
-            resultPanel.add(Box.createRigidArea(new Dimension(0, 10))); // 여백 추가
-            resultPanel.add(followButton);
+            // Add Info button
+            JButton infoButton = new JButton("Info");
+            infoButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            infoButton.addActionListener(e -> {
+                int targetUserId = userDAO.getUserId(searchedUserId); // ID of the searched user
+
+                if (targetUserId == -1) {
+                    JOptionPane.showMessageDialog(this, "User not found. Cannot open profile.");
+                } else {
+                    // Open OtherUserProfileUI for the searched user
+                    new OtherUserProfileUI(targetUserId).setVisible(true);
+                }
+            });
+
+            JPanel buttonPanel = new JPanel(new FlowLayout());
+            buttonPanel.add(followButton);
+            buttonPanel.add(infoButton);
+
+            resultPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Add spacing
+            resultPanel.add(buttonPanel);
 
         } else {
-            // 사용자 정보를 찾을 수 없는 경우
+            // If user information is not found
             JLabel notFoundLabel = new JLabel("User not found.");
             notFoundLabel.setFont(new Font("Arial", Font.PLAIN, 16));
             resultPanel.add(notFoundLabel);
         }
 
-        // 패널 갱신
+        // Refresh the panel
         resultPanel.revalidate();
         resultPanel.repaint();
     }

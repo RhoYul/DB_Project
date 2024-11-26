@@ -5,96 +5,98 @@ import Database.DBUtil;
 
 public class FollowDAO {
 
-    // 팔로우/언팔로우 토글
+    // Toggle follow/unfollow status
     public boolean toggleFollow(int followerId, int followingId) {
+        // If the user is already following, unfollow them
         if (isFollowing(followerId, followingId)) {
-            return unfollowUser(followerId, followingId); // 이미 팔로우 중이면 언팔로우
+            return unfollowUser(followerId, followingId);
         } else {
-            return followUser(followerId, followingId); // 팔로우하지 않았으면 팔로우
+            // Otherwise, follow the user
+            return followUser(followerId, followingId);
         }
     }
 
-    // 팔로우 추가
+    // Add a follow record
     public boolean followUser(int followerId, int followingId) {
         String query = "INSERT INTO follow (FOLLOW_ID, FOLLOWING_ID) VALUES (?, ?)";
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
              
-            pstmt.setInt(1, followerId); // 팔로워 ID
-            pstmt.setInt(2, followingId); // 팔로잉되는 사람 ID
-            pstmt.executeUpdate();
-            return true; // 성공 시 true 반환
+            pstmt.setInt(1, followerId); // Set follower ID
+            pstmt.setInt(2, followingId); // Set following ID
+            pstmt.executeUpdate(); // Execute the query
+            return true; // Return true if successful
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false; // 실패 시 false 반환
+            e.printStackTrace(); // Print stack trace for debugging
+            return false; // Return false if an error occurs
         }
     }
 
-    // 팔로우 삭제 (언팔로우)
+    // Remove a follow record (unfollow)
     public boolean unfollowUser(int followerId, int followingId) {
         String query = "DELETE FROM follow WHERE FOLLOW_ID = ? AND FOLLOWING_ID = ?";
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
              
-            pstmt.setInt(1, followerId); // 팔로워 ID
-            pstmt.setInt(2, followingId); // 팔로잉되는 사람 ID
-            pstmt.executeUpdate();
-            return true; // 성공 시 true 반환
+            pstmt.setInt(1, followerId); // Set follower ID
+            pstmt.setInt(2, followingId); // Set following ID
+            pstmt.executeUpdate(); // Execute the query
+            return true; // Return true if successful
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false; // 실패 시 false 반환
+            e.printStackTrace(); // Print stack trace for debugging
+            return false; // Return false if an error occurs
         }
     }
 
-    // 특정 사용자가 다른 사용자를 팔로우하고 있는지 확인
+    // Check if a user is following another user
     public boolean isFollowing(int followerId, int followingId) {
         String query = "SELECT COUNT(*) FROM follow WHERE FOLLOW_ID = ? AND FOLLOWING_ID = ?";
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
              
-            pstmt.setInt(1, followerId); // 팔로워 ID
-            pstmt.setInt(2, followingId); // 팔로잉되는 사람 ID
-            ResultSet rs = pstmt.executeQuery();
+            pstmt.setInt(1, followerId); // Set follower ID
+            pstmt.setInt(2, followingId); // Set following ID
+            ResultSet rs = pstmt.executeQuery(); // Execute the query
             if (rs.next()) {
-                return rs.getInt(1) > 0; // 팔로우 관계가 존재하면 true 반환
+                return rs.getInt(1) > 0; // Return true if the count is greater than 0
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // Print stack trace for debugging
         }
-        return false; // 기본적으로 false 반환
+        return false; // Return false if no follow relationship exists
     }
 
-    // 특정 사용자의 팔로워 수 반환
+    // Get the number of followers for a specific user
     public int getFollowerCount(int userId) {
         String query = "SELECT COUNT(*) FROM follow WHERE FOLLOWING_ID = ?";
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
              
-            pstmt.setInt(1, userId); // 특정 사용자의 ID
-            ResultSet rs = pstmt.executeQuery();
+            pstmt.setInt(1, userId); // Set the user ID
+            ResultSet rs = pstmt.executeQuery(); // Execute the query
             if (rs.next()) {
-                return rs.getInt(1); // 팔로워 수 반환
+                return rs.getInt(1); // Return the count of followers
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // Print stack trace for debugging
         }
-        return 0; // 기본적으로 0 반환
+        return 0; // Return 0 if an error occurs or no followers exist
     }
 
-    // 특정 사용자의 팔로잉 수 반환
+    // Get the number of users the specified user is following
     public int getFollowingCount(int userId) {
         String query = "SELECT COUNT(*) FROM follow WHERE FOLLOW_ID = ?";
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
              
-            pstmt.setInt(1, userId); // 특정 사용자의 ID
-            ResultSet rs = pstmt.executeQuery();
+            pstmt.setInt(1, userId); // Set the user ID
+            ResultSet rs = pstmt.executeQuery(); // Execute the query
             if (rs.next()) {
-                return rs.getInt(1); // 팔로잉 수 반환
+                return rs.getInt(1); // Return the count of followings
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // Print stack trace for debugging
         }
-        return 0; // 기본적으로 0 반환
+        return 0; // Return 0 if an error occurs or no followings exist
     }
 }

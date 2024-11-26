@@ -7,13 +7,13 @@ import java.awt.event.ActionEvent;
 
 public class LoginFrame extends JFrame {
 
-    private UserDAO userDAO;
-    int authorId;
+    private UserDAO userDAO; // UserDAO instance for user-related database operations
+    int authorId; // Author ID for the logged-in user
     
     public LoginFrame(UserDAO userDAO) {
         this.userDAO = userDAO;
 
-        // 프레임 설정
+        // Frame settings
         setTitle("Twitter Login");
         setSize(350, 450);
         setLocationRelativeTo(null);
@@ -21,7 +21,7 @@ public class LoginFrame extends JFrame {
         setLayout(new BorderLayout());
         getContentPane().setBackground(Color.BLACK);
 
-        // 상단 로고 패널
+        // Top logo panel
         JPanel logoPanel = new JPanel();
         JLabel logoLabel = new JLabel("X");
         logoPanel.setBackground(Color.BLACK);
@@ -30,13 +30,13 @@ public class LoginFrame extends JFrame {
         logoPanel.add(logoLabel);
         add(logoPanel, BorderLayout.NORTH);
 
-        // 중앙 로그인 입력 필드 패널
+        // Center panel for login input fields
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(Color.BLACK);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
 
-        // ID 라벨
+        // ID label
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.EAST;
@@ -44,14 +44,14 @@ public class LoginFrame extends JFrame {
         idLabel.setForeground(Color.WHITE);
         panel.add(idLabel, gbc);
 
-        // ID 필드
+        // ID field
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.WEST;
         JTextField idField = new JTextField(15);
         panel.add(idField, gbc);
 
-        // Password 라벨
+        // Password label
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.EAST;
@@ -59,14 +59,14 @@ public class LoginFrame extends JFrame {
         passwordLabel.setForeground(Color.WHITE);
         panel.add(passwordLabel, gbc);
 
-        // Password 필드
+        // Password field
         gbc.gridx = 1;
         gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.WEST;
         JPasswordField passwordField = new JPasswordField(15);
         panel.add(passwordField, gbc);
 
-        // 로그인 버튼
+        // Login button
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.gridwidth = 2;
@@ -75,7 +75,7 @@ public class LoginFrame extends JFrame {
         styleButton(loginButton, Color.WHITE, Color.BLACK, Color.WHITE);
         panel.add(loginButton, gbc);
 
-        // 회원가입 버튼
+        // Signup button
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.gridwidth = 2;
@@ -85,7 +85,7 @@ public class LoginFrame extends JFrame {
 
         add(panel, BorderLayout.CENTER);
 
-        // 하단 패널
+        // Bottom panel
         JPanel footerPanel = new JPanel();
         footerPanel.setBackground(Color.BLACK);
         JLabel footerLabel = new JLabel("© 2024 Twitter");
@@ -94,7 +94,7 @@ public class LoginFrame extends JFrame {
         footerPanel.add(footerLabel);
         add(footerPanel, BorderLayout.SOUTH);
 
-        // 로그인 버튼 동작
+        // Action for login button
         loginButton.addActionListener(e -> {
             String id = idField.getText();
             String password = new String(passwordField.getPassword());
@@ -102,25 +102,26 @@ public class LoginFrame extends JFrame {
             if (id.isEmpty() || password.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Please enter both ID and password.", "Error", JOptionPane.ERROR_MESSAGE);
             } else if (userDAO.authenticateUser(id, password)) {
-            	authorId = userDAO.getUserId(id);
+                authorId = userDAO.getUserId(id);
                 JOptionPane.showMessageDialog(this, "Login successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                openHomeFrame(id); // 로그인 성공 시 HomeFrame으로 이동
+                openHomeFrame(id); // Move to HomeFrame after successful login
             } else {
                 JOptionPane.showMessageDialog(this, "Invalid ID or password.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
 
-        // 회원가입 버튼 동작
+        // Action for signup button
         signupButton.addActionListener(e -> new RegisterFrame(userDAO).setVisible(true));
     }
 
-    // HomeFrame 열기
+    // Open HomeFrame
     private void openHomeFrame(String username) {
         HomeFrame homeFrame = new HomeFrame(authorId);
         homeFrame.setVisible(true);
-        dispose(); // LoginFrame 닫기
+        dispose(); // Close LoginFrame
     }
 
+    // Style the buttons
     private void styleButton(JButton button, Color textColor, Color backgroundColor, Color borderColor) {
         button.setForeground(textColor);
         button.setBackground(backgroundColor);

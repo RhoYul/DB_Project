@@ -8,36 +8,36 @@ import Post.PostDAO;
 import Post.PostDTO;
 import User.UserDAO;
 
-public class UserProfileUI extends JFrame {
-    private CardLayout cardLayout; // CardLayout for switching views
-    private JPanel mainPanel; // Main panel holding cards
+public class OtherUserProfileUI extends JFrame {
+    private CardLayout cardLayout; // CardLayout to switch between views
+    private JPanel mainPanel; // Main panel containing cards
 
-    public UserProfileUI(int userId, HomeFrame homeFrame) {
+    public OtherUserProfileUI(int userId) {
         setTitle("User Profile");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(500, 700);
         setLayout(new BorderLayout());
 
-        // User information panel (displays ID and name)
-        JPanel userInfoPanel = createUserInfoPanel(userId);
+        // Panel displaying user information (ID and name)
+        JPanel userInfoPanel = createOtherUserInfoPanel(userId);
         add(userInfoPanel, BorderLayout.NORTH);
 
         // Card layout panel
         mainPanel = new JPanel(new CardLayout());
-        mainPanel.add(createPostPanel(userId), "Post"); // Add post view card
+        mainPanel.add(createPostPanel(userId), "Post"); // Post card
 
         cardLayout = (CardLayout) mainPanel.getLayout();
         add(mainPanel, BorderLayout.CENTER);
     }
 
     // Create panel to display user information (ID and name)
-    private JPanel createUserInfoPanel(int userId) {
+    private JPanel createOtherUserInfoPanel(int userId) {
         JPanel userInfoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 10));
         userInfoPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         UserDAO userDAO = new UserDAO();
-        String userName = userDAO.getUserNameLogId(userId); // Get user name
-        String userLoginId = userDAO.getUserLogId(userId); // Get user login ID
+        String userName = userDAO.getUserNameLogId(userId); // Fetch user name
+        String userLoginId = userDAO.getUserLogId(userId); // Fetch user login ID
 
         JLabel userLabel = new JLabel(userLoginId + " (" + userName + ")");
         userLabel.setFont(new Font("맑은 고딕", Font.BOLD, 20));
@@ -47,7 +47,7 @@ public class UserProfileUI extends JFrame {
         return userInfoPanel;
     }
 
-    // Create panel to display user's posts
+    // Create panel displaying posts of a specific user
     private JPanel createPostPanel(int userId) {
         JPanel postPanel = new JPanel();
         postPanel.setLayout(new BoxLayout(postPanel, BoxLayout.Y_AXIS));
@@ -60,7 +60,7 @@ public class UserProfileUI extends JFrame {
 
         PostDAO postDAO = new PostDAO();
         try {
-            List<PostDTO> posts = postDAO.getPostsByUser(userId); // Fetch user's posts
+            List<PostDTO> posts = postDAO.getPostsByUser(userId); // Fetch posts of the user
             if (posts.isEmpty()) {
                 JLabel noPostLabel = new JLabel("No posts available.");
                 noPostLabel.setFont(new Font("맑은 고딕", Font.BOLD, 16));
@@ -69,7 +69,7 @@ public class UserProfileUI extends JFrame {
             } else {
                 for (PostDTO post : posts) {
                     JPanel postItem = createPostItem(post);
-                    postItem.setAlignmentX(Component.CENTER_ALIGNMENT); // Center alignment
+                    postItem.setAlignmentX(Component.CENTER_ALIGNMENT); // Align to center
                     postPanel.add(postItem);
                     postPanel.add(Box.createVerticalStrut(15)); // Add space between posts
                 }
@@ -93,9 +93,9 @@ public class UserProfileUI extends JFrame {
                 BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1)
         ));
         postItem.setBackground(Color.WHITE);
-        postItem.setMaximumSize(new Dimension(400, 150)); // Fixed size for the post
+        postItem.setMaximumSize(new Dimension(400, 150)); // Fix size of post panel
 
-        // Header panel: author info and timestamp
+        // Top panel: author info and timestamp
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setOpaque(false);
 
@@ -121,7 +121,7 @@ public class UserProfileUI extends JFrame {
 
         contentPanel.add(contentLabel);
 
-        // Action panel: like/dislike buttons
+        // Bottom panel: like/dislike buttons
         JPanel actionsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         actionsPanel.setOpaque(false);
 

@@ -10,24 +10,24 @@ import User.UserDAO;
 import Comments.*;
 
 public class PostFrame extends JFrame {
-    private int likes; // 좋아요 개수
-    private int dislikes; // 싫어요 개수
-    private JPanel commentPanel; // 댓글 표시 패널
-    private JLabel dislikeLabel; // 싫어요 개수 표시 라벨
-    private String authorName; // 작성자 이름
-    private String postContent; // 게시글 내용
+    private int likes; // Number of likes
+    private int dislikes; // Number of dislikes
+    private JPanel commentPanel; // Panel to display comments
+    private JLabel dislikeLabel; // Label to display the number of dislikes
+    private String authorName; // Author's name
+    private String postContent; // Content of the post
     private PostDAO postDAO;
     private PostDTO post;
     private UserDAO userDAO;
     private CommentsDAO commentsDAO;
-    private int userId;
-    private int postId;
-    private JButton likeButton;
-    private JButton dislikeButton;
-    private JLabel commentLabel;
+    private int userId; // Logged-in user's ID
+    private int postId; // Current post ID
+    private JButton likeButton; // Like button
+    private JButton dislikeButton; // Dislike button
+    private JLabel commentLabel; // Label for a single comment
 
     public PostFrame(int userId, int postId, String id, String postContent) {
-        this.postContent = postContent; // 게시글 내용 초기화
+        this.postContent = postContent; // Initialize post content
         this.postDAO = new PostDAO();
         this.userDAO = new UserDAO();
         this.commentsDAO = new CommentsDAO();
@@ -40,49 +40,49 @@ public class PostFrame extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        // 게시물 세부 내용 패널
+        // Panel for post details
         JPanel contentPanel = new JPanel();
-        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS)); // 세로로 정렬
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS)); // Vertical alignment
         contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // 작성자 이름 표시 (왼쪽 정렬)
+        // Display author name (left-aligned)
         JLabel authorLabel = new JLabel("Posted by: " + id);
-        authorLabel.setFont(new Font("맑은 고딕", Font.BOLD, 14)); // 글씨 크기 줄이기
+        authorLabel.setFont(new Font("맑은 고딕", Font.BOLD, 14)); // Smaller font size
         authorLabel.setForeground(new Color(29, 161, 242));
 
-        // 작성자 이름을 왼쪽 정렬 패널에 추가
+        // Add author name to a left-aligned panel
         JPanel authorPanel = new JPanel();
         authorPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         authorPanel.add(authorLabel);
         contentPanel.add(authorPanel);
 
-        // 게시물 내용 표시 (왼쪽 정렬)
+        // Display post content (left-aligned)
         JLabel contentLabel = new JLabel("<html>" + postContent.replace("\n", "<br>") + "</html>");
         contentLabel.setFont(new Font("Arial", Font.PLAIN, 18));
         contentLabel.setForeground(Color.BLACK);
 
-        // 게시물 내용을 왼쪽 정렬 패널에 추가
+        // Add post content to a left-aligned panel
         JPanel contentTextPanel = new JPanel();
         contentTextPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         contentTextPanel.add(contentLabel);
         contentPanel.add(contentTextPanel);
 
-        // 좋아요 및 싫어요 버튼 패널
+        // Like and dislike buttons panel
         JPanel likeDislikePanel = new JPanel();
         likeDislikePanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10));
 
-        // 좋아요 버튼
+        // Like button
         likeButton = new JButton("Like [" + postDAO.getLikesCount(postId) + "]");
         likeButton.setFont(new Font("Arial", Font.BOLD, 16));
-        likeButton.setBackground(Color.WHITE); // 버튼 배경 흰색
-        likeButton.setForeground(new Color(29, 161, 242)); // 버튼 글씨 트위터 블루
-        likeButton.setFocusPainted(false); // 클릭 시 테두리 제거
-        likeButton.setBorder(BorderFactory.createLineBorder(new Color(29, 161, 242))); // 외곽선 트위터 블루
-        likeButton.setPreferredSize(new Dimension(140, 50)); // 버튼 크기 증가
+        likeButton.setBackground(Color.WHITE); // White background
+        likeButton.setForeground(new Color(29, 161, 242)); // Twitter blue text
+        likeButton.setFocusPainted(false); // Remove focus border
+        likeButton.setBorder(BorderFactory.createLineBorder(new Color(29, 161, 242))); // Twitter blue border
+        likeButton.setPreferredSize(new Dimension(140, 50)); // Increase button size
         likeButton.addActionListener(e -> {
-        	try {
-                postDAO.toggleLike(postId, userId); // 좋아요 토글
-                // 최신 데이터 가져오기 및 UI 업데이트
+            try {
+                postDAO.toggleLike(postId, userId); // Toggle like
+                // Fetch the latest data and update the UI
                 int updatedLikes = postDAO.getLikesCount(postId);
                 int updatedHates = postDAO.getHatesCount(postId);
                 likeButton.setText("Like [" + updatedLikes + "]");
@@ -90,20 +90,20 @@ public class PostFrame extends JFrame {
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
-    	});
+        });
 
-        // 싫어요 버튼
+        // Dislike button
         dislikeButton = new JButton("Hate [" + postDAO.getHatesCount(postId) + "]");
         dislikeButton.setFont(new Font("Arial", Font.BOLD, 16));
-        dislikeButton.setBackground(new Color(29, 161, 242)); // 버튼 배경 트위터 블루
-        dislikeButton.setForeground(Color.WHITE); // 버튼 글씨 흰색
-        dislikeButton.setFocusPainted(false); // 클릭 시 테두리 제거
-        dislikeButton.setBorder(BorderFactory.createLineBorder(new Color(29, 161, 242))); // 외곽선 트위터 블루
-        dislikeButton.setPreferredSize(new Dimension(140, 50)); // 버튼 크기 증가
+        dislikeButton.setBackground(new Color(29, 161, 242)); // Twitter blue background
+        dislikeButton.setForeground(Color.WHITE); // White text
+        dislikeButton.setFocusPainted(false); // Remove focus border
+        dislikeButton.setBorder(BorderFactory.createLineBorder(new Color(29, 161, 242))); // Twitter blue border
+        dislikeButton.setPreferredSize(new Dimension(140, 50)); // Increase button size
         dislikeButton.addActionListener(e -> {
-        	try {
-                postDAO.toggleHate(postId, userId); // 싫어요 토글
-                // 최신 데이터 가져오기 및 UI 업데이트
+            try {
+                postDAO.toggleHate(postId, userId); // Toggle dislike
+                // Fetch the latest data and update the UI
                 int updatedLikes = postDAO.getLikesCount(postId);
                 int updatedHates = postDAO.getHatesCount(postId);
                 likeButton.setText("Like [" + updatedLikes + "]");
@@ -111,63 +111,62 @@ public class PostFrame extends JFrame {
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
-    	});
+        });
 
         contentPanel.add(likeDislikePanel);
         add(contentPanel, BorderLayout.CENTER);
         likeDislikePanel.add(likeButton);
         likeDislikePanel.add(dislikeButton);
 
-        // 댓글 입력 및 표시 패널
+        // Comment input and display panel
         JPanel commentInputPanel = new JPanel();
         commentInputPanel.setLayout(new BorderLayout());
 
-        // 댓글 입력 필드 크기 증가
+        // Increase comment input field size
         JTextField commentField = new JTextField();
         commentField.setFont(new Font("Arial", Font.PLAIN, 16));
         commentField.setPreferredSize(new Dimension(250, 50));
 
-        // Add Comment 버튼 스타일 및 크기 증가
+        // Add Comment button style and size
         JButton addCommentButton = new JButton("Add Comment");
         addCommentButton.setFont(new Font("Arial", Font.BOLD, 16));
-        addCommentButton.setBackground(Color.WHITE); // 배경 흰색
-        addCommentButton.setForeground(new Color(29, 161, 242)); // 글씨 트위터 블루
-        addCommentButton.setFocusPainted(false); // 클릭 시 테두리 제거
-        addCommentButton.setBorder(BorderFactory.createLineBorder(new Color(29, 161, 242))); // 외곽선 트위터 블루
-        addCommentButton.setPreferredSize(new Dimension(150, 50)); // 버튼 크기 증가
+        addCommentButton.setBackground(Color.WHITE); // White background
+        addCommentButton.setForeground(new Color(29, 161, 242)); // Twitter blue text
+        addCommentButton.setFocusPainted(false); // Remove focus border
+        addCommentButton.setBorder(BorderFactory.createLineBorder(new Color(29, 161, 242))); // Twitter blue border
+        addCommentButton.setPreferredSize(new Dimension(150, 50)); // Increase button size
 
         commentInputPanel.add(commentField, BorderLayout.CENTER);
         commentInputPanel.add(addCommentButton, BorderLayout.EAST);
 
-        // 댓글 표시 패널
+        // Panel to display comments
         commentPanel = new JPanel();
         commentPanel.setLayout(new BoxLayout(commentPanel, BoxLayout.Y_AXIS));
 
-        // 댓글 표시 패널 초기 댓글 로드
+        // Load initial comments into the display panel
         loadComments();
 
         JScrollPane commentScrollPane = new JScrollPane(commentPanel);
         commentScrollPane.setPreferredSize(new Dimension(400, 250));
 
-        // 메인 레이아웃 설정
+        // Set up the main layout
         setLayout(new BorderLayout());
         add(contentPanel, BorderLayout.NORTH);
         add(commentInputPanel, BorderLayout.SOUTH);
         add(commentScrollPane, BorderLayout.CENTER);
 
-        // 댓글 추가 버튼 동작
+        // Action for Add Comment button
         addCommentButton.addActionListener(e -> {
             String comment = commentField.getText().trim();
             commentLabel = new JLabel("<html><i>- " + authorName + ": " + comment + "</i></html>");
             commentLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
             if (!comment.isEmpty()) {
-                commentsDAO.addComment(postId, userId, comment);
-                
+                commentsDAO.addComment(postId, userId, comment); // Add comment to the database
+
+                // Reload comments from the database
                 List<CommentsDTO> commentList = commentsDAO.getCommentsByPostId(postId);
-                
                 commentPanel.removeAll();
-                
-                
+
                 if (commentList.isEmpty()) {
                     JLabel noCommentLabel = new JLabel("No comments available.");
                     noCommentLabel.setFont(new Font("Arial", Font.BOLD, 16));
@@ -176,52 +175,51 @@ public class PostFrame extends JFrame {
                 } else {
                     for (CommentsDTO comm : commentList) {
                         JLabel commentLabel = new JLabel(
-                        		String.format("<html><i>- %s (%s): %s</i></html>", 
-                                        comm.getUSER_NAME(), 
-                                        comm.getREGDATE(), 
+                                String.format("<html><i>- %s (%s): %s</i></html>",
+                                        comm.getUSER_NAME(),
+                                        comm.getREGDATE(),
                                         comm.getCOMMENT_TEXT())
                         );
                         commentLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
                         commentPanel.add(commentLabel);
-                        commentPanel.add(Box.createVerticalStrut(10)); // 댓글 간 간격 추가
+                        commentPanel.add(Box.createVerticalStrut(10)); // Add space between comments
                     }
                 }
-                commentField.setText(""); // 입력 필드 초기화
-
+                commentField.setText(""); // Clear input field
                 commentPanel.revalidate();
                 commentPanel.repaint();
             }
         });
     }
-    
+
+    // Load comments into the comment panel
     private void loadComments() {
-        commentPanel.removeAll(); // 기존 댓글 UI 초기화
+        commentPanel.removeAll(); // Clear existing UI
         List<CommentsDTO> commentList = commentsDAO.getCommentsByPostId(postId);
 
         if (commentList.isEmpty()) {
-            // 댓글이 없을 때 안내 메시지 표시
+            // Show a message when there are no comments
             JLabel noCommentLabel = new JLabel("No comments available.");
             noCommentLabel.setFont(new Font("Arial", Font.BOLD, 16));
             noCommentLabel.setHorizontalAlignment(SwingConstants.CENTER);
             commentPanel.add(noCommentLabel);
         } else {
-            // 댓글 목록 표시
+            // Display the list of comments
             for (CommentsDTO comm : commentList) {
                 JLabel commentLabel = new JLabel(
-                    String.format("<html><i>- %s (%s): %s</i></html>",
-                                  comm.getUSER_NAME(),
-                                  comm.getREGDATE(),
-                                  comm.getCOMMENT_TEXT())
+                        String.format("<html><i>- %s (%s): %s</i></html>",
+                                comm.getUSER_NAME(),
+                                comm.getREGDATE(),
+                                comm.getCOMMENT_TEXT())
                 );
                 commentLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
                 commentPanel.add(commentLabel);
-                commentPanel.add(Box.createVerticalStrut(10)); // 댓글 간격 추가
+                commentPanel.add(Box.createVerticalStrut(10)); // Add space between comments
             }
         }
 
-        // UI 갱신
+        // Refresh the UI
         commentPanel.revalidate();
         commentPanel.repaint();
     }
-
 }

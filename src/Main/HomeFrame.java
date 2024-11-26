@@ -8,12 +8,12 @@ import Post.PostDAO;
 import Post.PostDTO;
 
 public class HomeFrame extends JFrame {
-    private JPanel postPanel; // 게시글 표시 패널
-    private JLabel noPostLabel; // 게시물이 없을 때 표시할 라벨
-    private int userId; // 로그인한 사용자의 ID
-    private PostDAO postDAO; // PostDAO 인스턴스
-    private String currentSortBy = "date"; // 초기값 설정
-    
+    private JPanel postPanel; // Panel to display posts
+    private JLabel noPostLabel; // Label to display when there are no posts
+    private int userId; // Logged-in user's ID
+    private PostDAO postDAO; // Instance of PostDAO
+    private String currentSortBy = "date"; // Initial sorting criterion
+
     public HomeFrame(int userId) {
         this.userId = userId;
         this.postDAO = new PostDAO();
@@ -24,25 +24,25 @@ public class HomeFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // 검색 버튼 추가
+        // Add search button
         JButton searchButton = new JButton("search");
         searchButton.setFont(new Font("Arial", Font.PLAIN, 12));
-        searchButton.setBounds(10, 10, 70, 30); // 위치와 크기 설정
-        add(searchButton); // 프레임에 버튼 추가
+        searchButton.setBounds(10, 10, 70, 30); // Set position and size
+        add(searchButton); // Add button to the frame
 
         searchButton.addActionListener(e -> {
-            new SearchFrame(userId).setVisible(true); // SearchFrame 창 열기
+            new SearchFrame(userId).setVisible(true); // Open the SearchFrame
         });
 
-        // 사용자 버튼, 게시글 작성 버튼 패널 (하단)
+        // User button and post upload button panel (bottom)
         JPanel buttonPanel = new JPanel(new BorderLayout());
 
-        // 사용자 버튼
+        // User button
         JButton userButton = new JButton("User");
         userButton.setPreferredSize(new Dimension(250, 70));
         styleUserButton(userButton);
 
-        // 게시글 작성 버튼
+        // Post upload button
         JButton uploadButton = new JButton("+");
         uploadButton.setPreferredSize(new Dimension(250, 70));
         styleUploadButton(uploadButton);
@@ -52,7 +52,7 @@ public class HomeFrame extends JFrame {
 
         add(buttonPanel, BorderLayout.SOUTH);
 
-        // 상단 패널
+        // Header panel
         JPanel headerPanel = new JPanel(new BorderLayout());
 
         JPanel logoPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 225, 10));
@@ -79,20 +79,20 @@ public class HomeFrame extends JFrame {
 
         add(headerPanel, BorderLayout.NORTH);
 
-        // 게시글 패널 초기화
+        // Initialize the post panel
         postPanel = new JPanel();
         postPanel.setLayout(new BoxLayout(postPanel, BoxLayout.Y_AXIS));
         JScrollPane scrollPane = new JScrollPane(postPanel);
         add(scrollPane, BorderLayout.CENTER);
 
-        // 버튼 동작 정의
+        // Define button actions
         userButton.addActionListener(e -> {
-            UserProfileUI UserProfileUI = new UserProfileUI(userId, this); // 현재 사용자의 userId 전달
+            UserProfileUI UserProfileUI = new UserProfileUI(userId, this); // Pass the current user's userId
             UserProfileUI.setVisible(true);
         });
 
         uploadButton.addActionListener(e -> {
-            UploadFrame uploadFrame = new UploadFrame(userId, this); // 현재 사용자의 userId 전달
+            UploadFrame uploadFrame = new UploadFrame(userId, this); // Pass the current user's userId
             uploadFrame.setVisible(true);
         });
         
@@ -105,19 +105,19 @@ public class HomeFrame extends JFrame {
             updatePostList(currentSortBy);
         });
 
-        // 초기 게시글 로드
+        // Load initial posts
         updatePostList("date");
     }
 
-    // 게시글 목록 업데이트
+    // Update the post list
     private void updatePostList(String sortBy) {
-        postPanel.removeAll(); // 기존 게시글 제거
+        postPanel.removeAll(); // Remove existing posts
 
         try {
-            // PostDAO를 사용하여 게시글 가져오기
+            // Use PostDAO to fetch posts
             List<PostDTO> posts = postDAO.getPostsForUser(userId);
 
-            // 정렬 기준에 따라 정렬
+            // Sort posts based on the sorting criterion
             posts.sort((p1, p2) -> {
                 if ("popularity".equals(sortBy)) {
                     return Integer.compare(p2.getLikes(), p1.getLikes());
@@ -126,7 +126,7 @@ public class HomeFrame extends JFrame {
                 }
             });
 
-            // 게시글 추가
+            // Add posts to the panel
             if (posts.isEmpty()) {
                 JLabel noPostLabel = new JLabel("No posts available.");
                 noPostLabel.setFont(new Font("Arial", Font.BOLD, 16));
@@ -136,7 +136,7 @@ public class HomeFrame extends JFrame {
                 for (PostDTO post : posts) {
                     JPanel postItem = createPostItem(post);
                     postPanel.add(postItem);
-                    postPanel.add(Box.createVerticalStrut(10)); // 게시글 간 간격 추가
+                    postPanel.add(Box.createVerticalStrut(10)); // Add space between posts
                 }
             }
         } catch (SQLException e) {
@@ -148,30 +148,30 @@ public class HomeFrame extends JFrame {
         postPanel.repaint();
     }
 
-    // 게시글 항목 생성
+    // Create a post item panel
     private JPanel createPostItem(PostDTO post) {
-    	// 게시물 컨테이너
+    	// Post container
     	JPanel postContainer = new JPanel();
     	postContainer.setLayout(new BoxLayout(postContainer, BoxLayout.Y_AXIS));
     	postContainer.setBorder(BorderFactory.createCompoundBorder(
-    	        BorderFactory.createEmptyBorder(10, 10, 10, 10), // 상하좌우 여백 추가
-    	        BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1) // 테두리 두께를 1로 설정
+    	        BorderFactory.createEmptyBorder(10, 10, 10, 10), // Add padding
+    	        BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1) // Set border thickness to 1
     	    ));
     	postContainer.setBackground(Color.WHITE);
 
-    	// 게시물 가로 크기 고정, 세로 크기는 제한하지 않음
-    	postContainer.setMaximumSize(new Dimension(500, Integer.MAX_VALUE)); // 가로 고정, 세로는 제한 없음
-    	postContainer.setAlignmentX(Component.LEFT_ALIGNMENT); // 부모 패널에서 왼쪽 정렬
+    	// Fix horizontal size, no limit on vertical size
+    	postContainer.setMaximumSize(new Dimension(500, Integer.MAX_VALUE)); // Fixed width, no height limit
+    	postContainer.setAlignmentX(Component.LEFT_ALIGNMENT); // Align to the left in the parent panel
 
-    	// 상단 패널: 작성자 정보와 시간
+    	// Header panel: author info and timestamp
     	JPanel headerPanel = new JPanel(new BorderLayout());
-    	headerPanel.setOpaque(false); // 배경 투명
-    	headerPanel.setAlignmentX(Component.LEFT_ALIGNMENT); // 부모 패널에서 왼쪽 정렬
-    	headerPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0)); // 상단 간격
+    	headerPanel.setOpaque(false); // Transparent background
+    	headerPanel.setAlignmentX(Component.LEFT_ALIGNMENT); // Align to the left in the parent panel
+    	headerPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0)); // Add top margin
 
     	JLabel userInfoLabel = new JLabel(post.getLoginId() + " (" + post.getName() + ")");
     	userInfoLabel.setFont(new Font("맑은 고딕", Font.BOLD, 14));
-    	userInfoLabel.setForeground(new Color(29, 161, 242)); // 작성자 이름 색상 지정
+    	userInfoLabel.setForeground(new Color(29, 161, 242)); // Set author name color
 
     	JLabel timestampLabel = new JLabel(post.getRegDate());
     	timestampLabel.setFont(new Font("Arial", Font.PLAIN, 12));
@@ -180,75 +180,75 @@ public class HomeFrame extends JFrame {
     	headerPanel.add(userInfoLabel, BorderLayout.WEST);
     	headerPanel.add(timestampLabel, BorderLayout.EAST);
 
-    	// 본문 패널: 텍스트와 이미지
+    	// Content panel: text and image
     	JPanel contentPanel = new JPanel();
     	contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
-    	contentPanel.setOpaque(false); // 배경 투명
-    	contentPanel.setAlignmentX(Component.LEFT_ALIGNMENT); // 부모 패널에서 왼쪽 정렬
-    	contentPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0)); // 본문 간격 추가
+    	contentPanel.setOpaque(false); // Transparent background
+    	contentPanel.setAlignmentX(Component.LEFT_ALIGNMENT); // Align to the left in the parent panel
+    	contentPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0)); // Add content margin
 
-    	// 텍스트 내용: \n 줄바꿈 처리를 위해 <br>로 변환
+    	// Post content: process \n for line breaks
     	String formattedContent = "<html><div style='width: 100%; text-align: left;'>" + post.getContent().replace("\n", "<br>") + "</div></html>";
     	JLabel contentLabel = new JLabel(formattedContent);
     	contentLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-    	contentLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)); // 텍스트 간격
+    	contentLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)); // Add text padding
     	contentLabel.setForeground(Color.BLACK);
-    	contentLabel.setHorizontalAlignment(SwingConstants.LEFT); // JLabel 내부 텍스트 왼쪽 정렬
-    	contentLabel.setAlignmentX(Component.LEFT_ALIGNMENT); // BoxLayout에서 왼쪽 정렬 보장
+    	contentLabel.setHorizontalAlignment(SwingConstants.LEFT); // Align text to the left within JLabel
+    	contentLabel.setAlignmentX(Component.LEFT_ALIGNMENT); // Ensure left alignment in BoxLayout
 
-    	// 본문 패널에 JLabel 추가
+    	// Add JLabel to content panel
     	contentPanel.add(contentLabel);
 
-    	// 하단 패널: 좋아요/싫어요 버튼
+    	// Actions panel: like/dislike buttons
     	JPanel actionsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    	actionsPanel.setOpaque(false); // 배경 투명
-    	actionsPanel.setAlignmentX(Component.LEFT_ALIGNMENT); // 부모 패널에서 왼쪽 정렬
-    	actionsPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0)); // 하단 간격 추가
+    	actionsPanel.setOpaque(false); // Transparent background
+    	actionsPanel.setAlignmentX(Component.LEFT_ALIGNMENT); // Align to the left in the parent panel
+    	actionsPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0)); // Add bottom margin
 
-    	// 좋아요 버튼
+    	// Like button
     	JButton likeButton = new JButton("Like [" + postDAO.getLikesCount(post.getId()) + "]");
     	likeButton.setFont(new Font("Arial", Font.PLAIN, 12));
-    	likeButton.setBackground(new Color(29, 161, 242)); // 트위터 블루
+    	likeButton.setBackground(new Color(29, 161, 242)); // Twitter blue
     	likeButton.setForeground(Color.WHITE);
     	likeButton.setFocusPainted(false);
     	likeButton.addActionListener(e -> {
     	    try {
-    	        postDAO.toggleLike(post.getId(), userId); // 좋아요 토글
-    	        updatePostList("date"); // UI 업데이트
+    	        postDAO.toggleLike(post.getId(), userId); // Toggle like
+    	        updatePostList("date"); // Update UI
     	    } catch (SQLException ex) {
     	        ex.printStackTrace();
     	    }
     	});
 
-    	// 싫어요 버튼
+    	// Dislike button
     	JButton dislikeButton = new JButton("Hate [" + postDAO.getHatesCount(post.getId()) + "]");
     	dislikeButton.setFont(new Font("Arial", Font.PLAIN, 12));
-    	dislikeButton.setBackground(new Color(242, 29, 29)); // 빨간색
+    	dislikeButton.setBackground(new Color(242, 29, 29)); // Red
     	dislikeButton.setForeground(Color.WHITE);
     	dislikeButton.setFocusPainted(false);
     	dislikeButton.addActionListener(e -> {
     	    try {
-    	        postDAO.toggleHate(post.getId(), userId); // 싫어요 토글
-    	        updatePostList("date"); // UI 업데이트
+    	        postDAO.toggleHate(post.getId(), userId); // Toggle dislike
+    	        updatePostList("date"); // Update UI
     	    } catch (SQLException ex) {
     	        ex.printStackTrace();
     	    }
     	});
 
-    	// 좋아요/싫어요 버튼 추가
+    	// Add like/dislike buttons
     	actionsPanel.add(likeButton);
     	actionsPanel.add(dislikeButton);
 
-    	// 게시글 레이아웃 구성
+    	// Assemble post layout
     	postContainer.add(userInfoLabel);
-    	postContainer.add(headerPanel); // 작성자 정보와 시간
-    	postContainer.add(contentPanel); // 게시글 내용
-    	postContainer.add(actionsPanel); // 좋아요/싫어요 버튼
+    	postContainer.add(headerPanel); // Author info and timestamp
+    	postContainer.add(contentPanel); // Post content
+    	postContainer.add(actionsPanel); // Like/dislike buttons
 
     	postContainer.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
-                // PostFrame을 열고 게시글 정보를 전달
+                // Open PostFrame and pass post details
                 new PostFrame(userId, post.getId(), post.getName(), post.getContent()).setVisible(true);
             }
         });
@@ -258,18 +258,18 @@ public class HomeFrame extends JFrame {
 
     public void initializeUI() {
         postPanel = new JPanel();
-        postPanel.setLayout(new BoxLayout(postPanel, BoxLayout.Y_AXIS)); // 수직 정렬
-        postPanel.setBackground(new Color(245, 245, 245)); // 트위터 스타일 배경색
+        postPanel.setLayout(new BoxLayout(postPanel, BoxLayout.Y_AXIS)); // Vertical alignment
+        postPanel.setBackground(new Color(245, 245, 245)); // Twitter-style background color
 
         JScrollPane scrollPane = new JScrollPane(postPanel);
-        scrollPane.getVerticalScrollBar().setUnitIncrement(16); // 스크롤 속도 설정
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16); // Set scroll speed
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); // 가로 스크롤 비활성화
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); // Disable horizontal scrolling
 
-        add(scrollPane, BorderLayout.CENTER); // 스크롤 패널 추가
+        add(scrollPane, BorderLayout.CENTER); // Add scroll panel
     }
 
-    // 사용자 버튼 스타일 정의
+    // Define user button style
     private void styleUserButton(JButton button) {
         button.setBackground(Color.WHITE);
         button.setForeground(new Color(29, 161, 242));
@@ -278,7 +278,7 @@ public class HomeFrame extends JFrame {
         button.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
     }
 
-    // 게시물 작성 버튼 스타일 정의
+    // Define post upload button style
     private void styleUploadButton(JButton button) {
         button.setBackground(new Color(29, 161, 242));
         button.setForeground(Color.WHITE);

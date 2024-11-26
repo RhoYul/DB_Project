@@ -5,12 +5,12 @@ import javax.swing.*;
 import java.awt.*;
 
 public class RegisterFrame extends JFrame {
-    private UserDAO userDAO;
+    private UserDAO userDAO; // UserDAO instance for database operations
 
     public RegisterFrame(UserDAO userDAO) {
         this.userDAO = userDAO;
 
-        // JFrame 설정
+        // Set up the JFrame
         setTitle("Twitter Sign Up");
         setSize(400, 500);
         setLocationRelativeTo(null);
@@ -21,7 +21,7 @@ public class RegisterFrame extends JFrame {
         Font boldFont = new Font("Arial", Font.BOLD, 14);
         Color twitterBlue = new Color(29, 161, 242);
 
-        // 로고 패널
+        // Logo panel
         JPanel logoPanel = new JPanel();
         logoPanel.setBounds(0, 0, 400, 60);
         logoPanel.setBackground(Color.BLACK);
@@ -31,7 +31,7 @@ public class RegisterFrame extends JFrame {
         logoPanel.add(logoLabel);
         add(logoPanel);
 
-        // 이름 입력
+        // Name input field
         JLabel nameLabel = new JLabel("Name:");
         nameLabel.setBounds(50, 70, 100, 30);
         nameLabel.setForeground(Color.WHITE);
@@ -42,7 +42,7 @@ public class RegisterFrame extends JFrame {
         nameField.setBounds(130, 70, 150, 30);
         add(nameField);
 
-        // 이메일 입력
+        // Email input field
         JLabel emailLabel = new JLabel("Email:");
         emailLabel.setBounds(50, 120, 100, 30);
         emailLabel.setForeground(Color.WHITE);
@@ -53,7 +53,7 @@ public class RegisterFrame extends JFrame {
         emailField.setBounds(130, 120, 150, 30);
         add(emailField);
 
-        // 사용자 아이디 입력
+        // User ID input field
         JLabel idLabel = new JLabel("ID:");
         idLabel.setBounds(50, 190, 100, 30);
         idLabel.setForeground(Color.WHITE);
@@ -64,7 +64,7 @@ public class RegisterFrame extends JFrame {
         idField.setBounds(130, 190, 150, 30);
         add(idField);
 
-        // 비밀번호 입력
+        // Password input field
         JLabel passwordLabel = new JLabel("Password:");
         passwordLabel.setBounds(50, 260, 100, 30);
         passwordLabel.setForeground(Color.WHITE);
@@ -75,13 +75,13 @@ public class RegisterFrame extends JFrame {
         passwordField.setBounds(130, 260, 150, 30);
         add(passwordField);
 
-        // 가입하기 버튼
+        // Sign Up button
         JButton signupButton = new JButton("Sign Up");
         styleButton(signupButton, Color.BLACK, Color.WHITE, twitterBlue, boldFont);
         signupButton.setBounds(100, 330, 200, 50);
         add(signupButton);
 
-        // Sign Up 버튼 동작
+        // Action for Sign Up button
         signupButton.addActionListener(e -> {
             String name = nameField.getText();
             String email = emailField.getText();
@@ -93,28 +93,28 @@ public class RegisterFrame extends JFrame {
                 return;
             }
 
-            // 중복 체크
+            // Check for duplicate user ID or email
             if (isDuplicate(userId, email)) {
-                return; // 중복이면 종료
+                return; // Exit if duplicate found
             }
 
-            // 데이터베이스에 사용자 정보 저장
+            // Save user information to the database
             userDAO.insertUser(userId, password, name, email);
             JOptionPane.showMessageDialog(this, "Sign Up Successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
-            dispose(); // 창 닫기
+            dispose(); // Close the registration frame
         });
     }
 
-    // 아이디 및 이메일 중복 체크
+    // Check for duplicate user ID or email
     private boolean isDuplicate(String userId, String email) {
-        if (userDAO.authenticateUser(userId, email)) { // 이메일 중복 체크
+        if (userDAO.authenticateUser(userId, email)) { // Email duplicate check
             JOptionPane.showMessageDialog(this, "This email or ID is already in use.", "Error", JOptionPane.ERROR_MESSAGE);
             return true;
         }
         return false;
     }
 
-    // 버튼 스타일 설정 메서드
+    // Style the buttons
     private static void styleButton(JButton button, Color bgColor, Color borderColor, Color textColor, Font font) {
         button.setBackground(bgColor);
         button.setForeground(textColor);
