@@ -93,7 +93,6 @@ public class OtherUserProfileUI extends JFrame {
                 BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1)
         ));
         postItem.setBackground(Color.WHITE);
-        postItem.setMaximumSize(new Dimension(400, 150)); // Fix size of post panel
 
         // Top panel: author info and timestamp
         JPanel headerPanel = new JPanel(new BorderLayout());
@@ -143,6 +142,10 @@ public class OtherUserProfileUI extends JFrame {
         postItem.add(contentPanel);
         postItem.add(actionsPanel);
 
+        // Remove size restrictions
+        postItem.setAlignmentX(Component.CENTER_ALIGNMENT); // Center alignment
+
         return postItem;
     }
+
 }

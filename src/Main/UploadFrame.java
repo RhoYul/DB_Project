@@ -40,23 +40,15 @@ public class UploadFrame extends JFrame {
         // Bottom panel for buttons
         JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 10, 10)); // Two buttons side-by-side
 
-        // Image upload button
-        JButton imageUploadButton = new JButton("Image Upload");
-        styleButton(imageUploadButton);
-
         // Upload button
         JButton uploadButton = new JButton("Upload");
         styleButton(uploadButton);
 
-        buttonPanel.add(imageUploadButton);
         buttonPanel.add(uploadButton);
 
         panel.add(buttonPanel, BorderLayout.SOUTH);
 
         add(panel);
-
-        // Action listener for image upload button (simple message for now)
-        imageUploadButton.addActionListener(e -> JOptionPane.showMessageDialog(this, "Image Upload clicked!"));
 
         // Action listener for upload button
         uploadButton.addActionListener(e -> {
